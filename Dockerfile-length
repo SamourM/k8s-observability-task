@@ -3,7 +3,13 @@ FROM python:3.9-slim
 WORKDIR /app
 COPY length_service.py /app
 
-RUN pip install flask
+# Install required dependencies
+RUN pip install --no-cache-dir \
+    flask \
+    prometheus-client \
+    opentelemetry-sdk \
+    opentelemetry-instrumentation-flask \
+    opentelemetry-exporter-jaeger \
+    werkzeug
 
-CMD ["python", "length_service.py"]
-
+CMD ["python", "/app/length_service.py"]

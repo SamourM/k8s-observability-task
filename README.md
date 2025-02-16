@@ -109,3 +109,29 @@ Security: Implement HTTPS with SSL/TLS and use token-based authentication for se
 CI/CD Pipeline: Automate the deployment process using tools like GitLab CI, Jenkins, or GitHub Actions.
 Custom Dashboards: Use Grafana to create custom dashboards for visualizing the metrics collected by Prometheus.
 Scalability & Resilience: Scale the services horizontally and implement fault tolerance mechanisms in Kubernetes for high availability.
+
+
+prometheus:
+
+helm search hub Prometheus
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install prometheus prometheus-community/prometheus
+
+otel and jaeger
+
+helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+helm repo update
+helm search repo jaegertracing/jaeger
+ helm upgrade --install jaeger jaegertracing/jaeger
+ helm upgrade --install jaeger jaegertracing/jaeger    --set query.resources.requests.memory=512Mi   --set query.resources.limits.memory=1Gi    --set collector.resources.requests.memory=512Mi   --set collector.resources.limits.memory=1Gi    --set query.healthCheck.readinessProbe.enabled=false
+helm upgrade --install jaeger jaegertracing/jaeger  --values jaeger.yaml **
+
+
+helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+helm repo update
+helm show values open-telemetry/opentelemetry-collector > otel.yaml
+helm install otel-collector open-telemetry/opentelemetry-collector --values otel-collector-values.yaml --set image.repository="otel/opentelemetry-collector-k8s"
+
+https://medium.com/@blackhorseya/deploying-opentelemetry-and-jaeger-with-helm-on-kubernetes-d86cc8ba0332
+helm install jaeger jaegertracing/jaeger

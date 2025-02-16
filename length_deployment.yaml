@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: length-service
-          image: <your-registry>/length-service:latest
+          image: samour/length-service:latest
           ports:
             - containerPort: 8081
           livenessProbe:

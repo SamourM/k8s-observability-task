@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: jaeger
+  ports:
+    - protocol: TCP
+      port: {{ .Values.service.port }}
+      targetPort: 16686

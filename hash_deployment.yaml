@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: hash-service
-          image: <your-registry>/hash-service:latest
+          image: samour/hash-service:latest
           ports:
             - containerPort: 8080
           livenessProbe:
