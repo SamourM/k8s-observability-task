@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+spec:
+  replicas: {{ .Values.grafana.replicas }}
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+        - name: grafana
+          image: "grafana/grafana:8.0.0"  # Use the version from values.yaml
+          ports:
+            - containerPort: 3000  # Grafana's default port
+          env:
+            - name: GF_SECURITY_ADMIN_PASSWORD
+              value: {{ .Values.grafana.adminPassword }}  # Set the admin password from values.yaml
+          resources:
+            requests:
+              memory: {{ .Values.grafana.resources.requests.memory }}
+              cpu: {{ .Values.grafana.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.grafana.resources.limits.memory }}
+              cpu: {{ .Values.grafana.resources.limits.cpu }}
