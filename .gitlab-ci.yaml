@@ -1,0 +1,35 @@
+stages:
+  - build
+  - deploy
+
+# Define the Docker image tag, using the Git commit hash and length
+variables:
+  DOCKER_IMAGE: your-docker-repo/your-app
+  DOCKER_TAG: "${CI_COMMIT_SHORT_SHA}"
+
+# Build stage: Build the Docker image
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"  # Login to Docker Registry
+    - docker build -t $DOCKER_IMAGE:$DOCKER_TAG .  # Build the Docker image and tag it with the commit hash
+    - docker push $DOCKER_IMAGE:$DOCKER_TAG  # Push the Docker image to the registry
+
+# Deploy stage: Deploy the Docker image to the environment
+deploy:
+  stage: deploy
+  image: google/cloud-sdk:latest  # Assuming you're deploying to GKE or using Google Cloud SDK
+  script:
+    - echo "Deploying Docker image with hash: $DOCKER_TAG"
+    - kubectl set image deployment/your-deployment your-container=$DOCKER_IMAGE:$DOCKER_TAG --record  # Deploy to Kubernetes using kubectl
+    - kubectl rollout status deployment/your-deployment  # Wait for the deployment to complete
+
+# Optional: Clean up old Docker images (if necessary)
+cleanup:
+  stage: deploy
+  script:
+    - docker rmi $DOCKER_IMAGE:$DOCKER_TAG  # Optionally remove the Docker image after deployment
+  when: always

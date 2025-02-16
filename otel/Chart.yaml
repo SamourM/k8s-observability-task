@@ -1,0 +1,20 @@
+apiVersion: v2
+name: otel
+description: A Helm chart for deploying OpenTelemetry Collector
+
+type: application
+version: 1.0.0
+appVersion: "latest"
+
+
+keywords:
+  - observability
+  - tracing
+  - opentelemetry
+  - otel
+  - monitoring
+
+sources:
+  - https://github.com/open-telemetry/opentelemetry-collector
+
+dependencies: []

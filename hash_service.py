@@ -11,7 +11,7 @@ from werkzeug.middleware.dispatcher import DispatcherMiddleware
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
-from opentelemetry.exporter.jaeger.thrift import JaegerExporter
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 
 # Initialize Flask app
@@ -24,12 +24,12 @@ FlaskInstrumentor().instrument_app(app)
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
 
-# Configure Jaeger Exporter
-jaeger_exporter = JaegerExporter(
-    agent_host_name="jaeger",  # Change this to the correct hostname if needed
-    agent_port=6831
+# Configure OTLP Exporter
+otlp_exporter = OTLPSpanExporter(
+    endpoint="otel-collector:4317",  # OTLP endpoint, replace 'otel-collector' with your Jaeger Collector hostname
+    insecure=True  # If your OTLP endpoint does not require encryption
 )
-trace.get_tracer_provider().add_span_processor(BatchSpanProcessor(jaeger_exporter))
+trace.get_tracer_provider().add_span_processor(BatchSpanProcessor(otlp_exporter))
 
 # Prometheus Metrics
 REQUEST_COUNT = Counter('hash_requests_total', 'Total hash requests', ['method', 'endpoint'])

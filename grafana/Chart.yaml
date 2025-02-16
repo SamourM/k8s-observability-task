@@ -1,0 +1,11 @@
+apiVersion: v2
+name: grafana
+description: A Helm chart for Grafana
+version: 1.0.0
+appVersion: "8.0.0" # Specify the Grafana version you're targeting
+
+# Optional dependencies section if Grafana is a dependency for another chart
+dependencies:
+  - name: grafana
+    version: "8.x.x"
+    repository: "https://grafana.github.io/helm-charts"

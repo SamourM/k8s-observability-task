@@ -22,3 +22,5 @@ env:
     value: "prometheus"
   - name: MEMORY_MAX_TRACES
     value: "5000"
+  - name: COLLECTOR_OTLP_ENABLED
+    value: "true"

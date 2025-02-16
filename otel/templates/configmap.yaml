@@ -6,10 +6,12 @@ metadata:
 data:
   otel-collector-config.yaml: |
     receivers:
-      jaeger:
+      otlp:
         protocols:
           grpc:
             endpoint: "0.0.0.0:4317"
+          http:
+            endpoint: "0.0.0.0:4318"
       prometheus:
         config:
           scrape_configs:
@@ -22,17 +24,16 @@ data:
 
     exporters:
       jaeger:
-        endpoint: "http://jaeger:14250"
+        endpoint: "http://jaeger:14250"  # 14250 is the default Jaeger gRPC port
         insecure: true
-      prometheus:
-        endpoint: "0.0.0.0:8888"
+      logging:
 
     service:
       pipelines:
         traces:
-          receivers: [jaeger]
+          receivers: [otlp]
           processors: [batch]
-          exporters: [jaeger]
+          exporters: [jaeger, logging]
         metrics:
           receivers: [prometheus]
           exporters: [prometheus]

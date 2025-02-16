@@ -1,0 +1,16 @@
+# values.yaml
+
+grafana:
+  replicas: 1
+  adminPassword: "admin"  # Set a default password for the admin user
+  service:
+    type: ClusterIP  # Change to LoadBalancer or NodePort as needed
+  ingress:
+    enabled: false  # Set to true if you need an ingress for Grafana
+  resources:
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+    requests:
+      memory: "256Mi"
+      cpu: "250m"

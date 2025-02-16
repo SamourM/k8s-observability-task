@@ -1,0 +1,40 @@
+replicaCount: 1
+
+image:
+  repository: otel/opentelemetry-collector
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 4317  # gRPC port for OTLP
+
+resources:
+  limits:
+    memory: 512Mi
+  requests:
+    memory: 256Mi
+
+config:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+        http:
+
+  processors:
+    batch:
+
+  exporters:
+    logging:
+    jaeger:
+      endpoint: "jaeger:16686"
+      tls:
+        insecure: true
+
+  service:
+    pipelines:
+      traces:
+        receivers: [otlp]
+        processors: [batch]
+        exporters: [jaeger, logging]

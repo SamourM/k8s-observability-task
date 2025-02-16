@@ -10,6 +10,7 @@ RUN pip install --no-cache-dir \
     opentelemetry-sdk \
     opentelemetry-instrumentation-flask \
     opentelemetry-exporter-jaeger \
+    opentelemetry-exporter-otlp \
     werkzeug
 
 CMD ["python", "/app/hash_service.py"]
