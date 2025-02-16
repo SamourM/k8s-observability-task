@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otel-collector
+spec:
+  replicas: 1  # Replace with your desired number of replicas
+  selector:
+    matchLabels:
+      app: otel-collector
+  template:
+    metadata:
+      labels:
+        app: otel-collector
+    spec:
+      containers:
+        - name: otel-collector
+          image: "otel/opentelemetry-collector"  # Replace with actual image
+          imagePullPolicy: IfNotPresent  # Replace with your pull policy if needed
+          ports:
+            - containerPort: 4317  # OTLP gRPC
+            - containerPort: 4318  # OTLP HTTP
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/otel-collector-config
+          env:
+            - name: OTEL_CONFIG
+              value: "/etc/otel-collector-config/config.yaml"
+          resources:
+            limits:
+              memory: "512Mi"  # Example resource limit
+              cpu: "500m"      # Example CPU request
+            requests:
+              memory: "256Mi"  # Example resource request
+              cpu: "250m"      # Example CPU request
+      volumes:
+        - name: config-volume
+          configMap:
+            name: otel-config  # Ensure your ConfigMap is named 'otel-config'
