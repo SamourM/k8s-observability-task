@@ -135,3 +135,24 @@ helm install otel-collector open-telemetry/opentelemetry-collector --values otel
 
 https://medium.com/@blackhorseya/deploying-opentelemetry-and-jaeger-with-helm-on-kubernetes-d86cc8ba0332
 helm install jaeger jaegertracing/jaeger
+
+
+
+
+helm install jaeger ./
+helm install prometheus ./
+
+kubectl port-forward svc/prometheus 9090:9090
+
+http://localhost:9090
+
+
+helm install jaeger ./
+kubectl port-forward svc/jaeger 16686:16686
+http://localhost:16686
+
+
+helm upgrade prometheus ./prometheus-chart
+
+
+curl -X POST http://localhost:8080/hash  -H "Content-Type: application/json" -d "{\"text\": \"Apple\"}"
