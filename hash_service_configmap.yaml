@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hash-service-config
+data:
+  SERVICE_PORT: "8080"
+

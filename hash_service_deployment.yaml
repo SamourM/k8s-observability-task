@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hash-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hash-service
+  template:
+    metadata:
+      labels:
+        app: hash-service
+    spec:
+      containers:
+        - name: hash-service
+          image: <your-registry>/hash-service:latest
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
