@@ -15,9 +15,10 @@ The goal is to implement observability using **Prometheus** for monitoring and *
 
 1. Clone the Repository
 Clone the repository to your local machine and navigate to the project directory:
+
 ```bash
-git clone <repository-url>
-cd <repository-folder>
+git clone git@github.com:SamourM/k8s-observability-task.git
+cd k8s-observability-task.git
 ```
 
 2. Build and Push Docker Images
@@ -31,11 +32,11 @@ docker push <your-registry>/hash-service:latest
 docker push <your-registry>/length-service:latest
 ```
 
-3. Deploy to Kubernetes
+3. Deploy Services to Kubernetes
 Apply the Kubernetes manifests to deploy the services and other configurations:
 
 ```bash
-kubectl apply -f kubernetes/
+kubectl apply -f <k8s-templates yaml files>
 ```
 
 4. Install Prometheus and Jaeger using Helm
@@ -43,16 +44,17 @@ kubectl apply -f kubernetes/
 Use Helm to deploy Prometheus and Jaeger for monitoring and tracing:
 
 ```bash
-helm install prometheus prometheus-community/prometheus
-helm install jaeger jaegertracing/jaeger
-Example API Requests
-Once your services are up, you can interact with them using curl or Postman.
+helm install prometheus .\prometheus\
+helm install jaeger .\jaeger\
+helm install otel .\otel\
+helm install grafana .\grafana\
 ```
+## **Example Requests**
 
 Hash Service:
 
 ```bash
-curl -X POST http://localhost:8080/hash -d "Apple"
+curl -X POST http://localhost:8080/hash  -H "Content-Type: application/json" -d "{\"text\": \"Apple\"}"
 ```
 
 This will return a JSON object with the SHA256 hash of the input string:
@@ -63,7 +65,7 @@ This will return a JSON object with the SHA256 hash of the input string:
 
 Length Service:
 ```bash
-curl -X POST http://localhost:8081/length -d "Apple"
+curl -X POST http://localhost:8081/length  -H "Content-Type: application/json" -d "{\"text\": \"Apple\"}"
 ```
 
 This will return the length of the input string:
@@ -72,20 +74,14 @@ This will return the length of the input string:
 {"length": 5}
 ```
 
-Observbility
+## **Observability - View Traces and Metrics**
 
-helm install prometheus ./prometheus
-
-helm install jaeger ./jaeger
-
-
-Viewing Traces
 To observe the flow of requests across services and inspect distributed traces:
 
 Open the Jaeger UI at:
 
 ```bash
-http://<jaeger-url>/search
+http://<jaeger-url>:16686
 ```
 
 Here, you can search for traces related to your service calls and view detailed tracing information.
@@ -96,63 +92,36 @@ For monitoring the application’s performance, use Prometheus to view real-time
 Access the Prometheus dashboard at:
 
 ```bash
-http://<prometheus-url>/graph
+http://<prometheus-url>:9090
+http://<grafana-url>:3000
 ```
 
 You can query various metrics such as request duration, success/failure rates, and more.
 
 
-Optional Improvements
+## **Optional Improvements**
+
 Enhance your project further with the following optional improvements:
 
 Security: Implement HTTPS with SSL/TLS and use token-based authentication for secure API access.
-CI/CD Pipeline: Automate the deployment process using tools like GitLab CI, Jenkins, or GitHub Actions.
-Custom Dashboards: Use Grafana to create custom dashboards for visualizing the metrics collected by Prometheus.
-Scalability & Resilience: Scale the services horizontally and implement fault tolerance mechanisms in Kubernetes for high availability.
+
+CI/CD Pipeline: Automate the deployment process using tools like GitLab CI, Jenkins, or GitHub Actions, I added one gitlab ci example in this repo.
+
+Custom Dashboards: Use Grafana to create custom dashboards for visualizing the metrics collected by Prometheus, I implemented grafana with prometheus as datasource.
+
+Scalability & Resilience: Scale the services horizontally and implement fault tolerance mechanisms in Kubernetes for high availability, like using HPA, BDP ..etc.
 
 
-prometheus:
 
-helm search hub Prometheus
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm repo update
-helm install prometheus prometheus-community/prometheus
+## **Snippets**
 
-otel and jaeger
-
-helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
-helm repo update
-helm search repo jaegertracing/jaeger
- helm upgrade --install jaeger jaegertracing/jaeger
- helm upgrade --install jaeger jaegertracing/jaeger    --set query.resources.requests.memory=512Mi   --set query.resources.limits.memory=1Gi    --set collector.resources.requests.memory=512Mi   --set collector.resources.limits.memory=1Gi    --set query.healthCheck.readinessProbe.enabled=false
-helm upgrade --install jaeger jaegertracing/jaeger  --values jaeger.yaml **
-
-
-helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
-helm repo update
-helm show values open-telemetry/opentelemetry-collector > otel.yaml
-helm install otel-collector open-telemetry/opentelemetry-collector --values otel-collector-values.yaml --set image.repository="otel/opentelemetry-collector-k8s"
-
-https://medium.com/@blackhorseya/deploying-opentelemetry-and-jaeger-with-helm-on-kubernetes-d86cc8ba0332
-helm install jaeger jaegertracing/jaeger
+Please refer to snippet folder.
 
 
 
 
-helm install jaeger ./
-helm install prometheus ./
-
-kubectl port-forward svc/prometheus 9090:9090
-
-http://localhost:9090
 
 
-helm install jaeger ./
-kubectl port-forward svc/jaeger 16686:16686
-http://localhost:16686
 
 
-helm upgrade prometheus ./prometheus-chart
 
-
-curl -X POST http://localhost:8080/hash  -H "Content-Type: application/json" -d "{\"text\": \"Apple\"}"
